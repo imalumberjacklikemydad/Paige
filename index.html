@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#120a24" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Paige" />
+  <title>Paige</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">PWS V0.2</div>
+        <h1>Paige</h1>
+      </div>
+      <button id="settingsButton" class="icon-button" aria-label="AI settings">⚙︎</button>
+    </header>
+
+    <main id="chat" class="chat" aria-live="polite"></main>
+
+    <form id="composer" class="composer">
+      <textarea id="messageInput" rows="1" placeholder="Message Paige…" aria-label="Message Paige"></textarea>
+      <button id="sendButton" type="submit">Send</button>
+    </form>
+  </div>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" class="settings-card">
+      <div class="settings-heading">
+        <div><div class="eyebrow">PWS V0.2</div><h2>AI Settings</h2></div>
+        <button value="cancel" class="icon-button" aria-label="Close settings">×</button>
+      </div>
+      <label>Endpoint<input id="endpoint" type="url" placeholder="https://api.openai.com/v1/chat/completions" /></label>
+      <label>Model<input id="model" type="text" placeholder="Model name" /></label>
+      <label>API key<input id="apiKey" type="password" autocomplete="off" placeholder="Stored only on this device" /></label>
+      <label>Temperature <span id="temperatureValue"></span><input id="temperature" type="range" min="0" max="2" step="0.1" /></label>
+      <label>Paige system prompt<textarea id="systemPrompt" rows="6"></textarea></label>
+      <div class="settings-actions">
+        <button id="testConnection" type="button" class="secondary">Test connection</button>
+        <button id="saveSettings" type="button">Save</button>
+      </div>
+      <p id="settingsStatus" class="status"></p>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
