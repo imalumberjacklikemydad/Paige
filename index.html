@@ -14,11 +14,8 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div>
-        <div class="eyebrow">PWS V0.2</div>
-        <h1>Paige</h1>
-      </div>
-      <button id="settingsButton" class="icon-button" aria-label="AI settings">⚙︎</button>
+      <div><div class="eyebrow">PWS V0.3</div><h1>Paige</h1><div id="connectionBadge" class="connection-badge">Local conversation</div></div>
+      <div class="top-actions"><button id="newChatButton" class="icon-button" aria-label="New conversation">＋</button><button id="settingsButton" class="icon-button" aria-label="AI settings">⚙︎</button></div>
     </header>
 
     <main id="chat" class="chat" aria-live="polite"></main>
@@ -31,23 +28,21 @@
 
   <dialog id="settingsDialog">
     <form method="dialog" class="settings-card">
-      <div class="settings-heading">
-        <div><div class="eyebrow">PWS V0.2</div><h2>AI Settings</h2></div>
-        <button value="cancel" class="icon-button" aria-label="Close settings">×</button>
-      </div>
-      <label>Endpoint<input id="endpoint" type="url" placeholder="https://api.openai.com/v1/chat/completions" /></label>
-      <label>Model<input id="model" type="text" placeholder="Model name" /></label>
-      <label>API key<input id="apiKey" type="password" autocomplete="off" placeholder="Stored only on this device" /></label>
-      <label>Temperature <span id="temperatureValue"></span><input id="temperature" type="range" min="0" max="2" step="0.1" /></label>
-      <label>Paige system prompt<textarea id="systemPrompt" rows="6"></textarea></label>
-      <div class="settings-actions">
-        <button id="testConnection" type="button" class="secondary">Test connection</button>
-        <button id="saveSettings" type="button">Save</button>
-      </div>
+      <div class="settings-heading"><div><div class="eyebrow">PWS V0.3</div><h2>Paige Settings</h2></div><button value="cancel" class="icon-button" aria-label="Close settings">×</button></div>
+      <section class="settings-section"><h3>AI connection</h3>
+        <label>Endpoint<input id="endpoint" type="url" placeholder="https://api.openai.com/v1/chat/completions" /></label>
+        <label>Model<input id="model" type="text" placeholder="Model name" /></label>
+        <label>API key<input id="apiKey" type="password" autocomplete="off" placeholder="Stored only on this device" /></label>
+        <label>Temperature <span id="temperatureValue"></span><input id="temperature" type="range" min="0" max="2" step="0.1" /></label>
+      </section>
+      <section class="settings-section"><h3>Character</h3><label>Paige system prompt<textarea id="systemPrompt" rows="8"></textarea></label></section>
+      <section class="settings-section"><h3>Conversation</h3><label class="toggle-row"><input id="includeMemory" type="checkbox" /> Keep a compact memory of important details</label><label>Memory<textarea id="memory" rows="5" placeholder="Facts Paige should remember across chats…"></textarea></label><button id="exportChat" type="button" class="secondary wide">Export conversation</button></section>
+      <div class="settings-actions"><button id="testConnection" type="button" class="secondary">Test connection</button><button id="saveSettings" type="button">Save</button></div>
       <p id="settingsStatus" class="status"></p>
     </form>
   </dialog>
 
+  <dialog id="confirmDialog"><form method="dialog" class="confirm-card"><h2>Start a new conversation?</h2><p>Your current chat stays on this device until you confirm.</p><div class="settings-actions"><button value="cancel" class="secondary">Cancel</button><button id="confirmNewChat" value="default">Start new</button></div></form></dialog>
   <script src="app.js"></script>
 </body>
 </html>
