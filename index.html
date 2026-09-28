@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="Paige" />
   <title>Paige</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css?v=0.7.0" />
+  <link rel="stylesheet" href="styles.css?v=0.7.1" />
 </head>
 <body>
   <div class="app-shell">
@@ -22,15 +22,15 @@
   </div>
   <dialog id="settingsDialog">
     <form method="dialog" class="settings-card">
-      <div class="settings-heading"><div><div class="eyebrow">PWS V0.5</div><h2>Paige Settings</h2></div><button value="cancel" class="icon-button" aria-label="Close settings">×</button></div>
+      <div class="settings-heading"><div><div class="eyebrow">PWS V0.7</div><h2>Paige Settings</h2></div><button value="cancel" class="icon-button" aria-label="Close settings">×</button></div>
+      <section class="settings-section" id="speechSettings"><h3>Voice</h3><p>Uses the voices available on this device. No extra speech API charge.</p><label>Paige’s voice<select id="voiceURI"><option value="">System default</option></select></label><label>Speaking speed <span id="speechRateValue">1.0×</span><input id="speechRate" type="range" min="0.7" max="1.5" step="0.1" value="1" /></label><button id="previewVoice" type="button" class="secondary" data-idle-label="Preview voice" data-playing-label="Stop preview">Preview voice</button></section>
       <section class="settings-section"><h3>Secure AI connection</h3><p>Paige now connects through a private backend so your OpenAI API key does not live in this website or its GitHub repository.</p><label>Backend URL<input id="endpoint" type="url" placeholder="https://your-paige-backend.example.com/api/chat" /></label><label>Model<input id="model" type="text" placeholder="gpt-5.6" /></label><label>Temperature <span id="temperatureValue"></span><input id="temperature" type="range" min="0" max="2" step="0.1" /></label></section>
       <section class="settings-section"><h3>Character</h3><label>Paige system prompt<textarea id="systemPrompt" rows="8"></textarea></label></section>
-      <section class="settings-section" id="speechSettings"><h3>Voice</h3><p>Uses the voices available on this device. No extra speech API charge.</p><label>Paige’s voice<select id="voiceURI"><option value="">System default</option></select></label><label>Speaking speed <span id="speechRateValue">1.0×</span><input id="speechRate" type="range" min="0.7" max="1.5" step="0.1" value="1" /></label><button id="previewVoice" type="button" class="secondary" data-idle-label="Preview voice" data-playing-label="Stop preview">Preview voice</button></section>
       <section class="settings-section"><h3>Conversation</h3><label class="toggle-row"><input id="includeMemory" type="checkbox" /> Keep a compact memory of important details</label><label>Memory<textarea id="memory" rows="5" placeholder="Facts Paige should remember across chats…"></textarea></label><button id="exportChat" type="button" class="secondary wide">Export conversation</button></section>
       <div class="settings-actions"><button id="testConnection" type="button" class="secondary">Test connection</button><button id="saveSettings" type="button">Save</button></div><p id="settingsStatus" class="status"></p>
     </form>
   </dialog>
   <dialog id="confirmDialog"><form method="dialog" class="confirm-card"><h2>Start a new conversation?</h2><p>Your current chat stays on this device until you confirm.</p><div class="settings-actions"><button value="cancel" class="secondary">Cancel</button><button id="confirmNewChat" value="default">Start new</button></div></form></dialog>
-  <script src="app.js?v=0.7.0"></script>
+  <script src="app.js?v=0.7.1"></script>
 </body>
 </html>
