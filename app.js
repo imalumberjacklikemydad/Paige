@@ -14,12 +14,13 @@ function systemMessage(){let prompt=settings.systemPrompt||DEFAULTS.systemPrompt
 async function requestAI(history){
   if(!configured())throw new Error('Paige’s secure AI backend still needs its one-time deployment setup. No API key should be entered into this website.');
   const continuing=history.at(-1)?.hidden===true;
-  const context=continuing?history.filter(m=>!m.hidden).slice(1).slice(-8):history.slice(-16);
+  const visibleHistory=history.filter(m=>!m.hidden);
+  const context=continuing?visibleHistory.slice(1).slice(-8):visibleHistory.slice(-16);
   const direction=continuing
     ? "Continue from Paige’s last line, which is already in the transcript. Write the NEXT beat, not another version of the welcome. Paige should do or notice something new in one to three sentences. Do not say the visitor caught her mid-blend, invite them in again, repeat the crystals, or offer another seating, tea or music menu. Do not speak or act for the visitor. Leave room for their response."
     : "Reply as Paige in character and respond to the visitor’s latest words. For a simple introduction, write two to four natural sentences in the spa arrival scene. Avoid lists of services, elaborate self-description, medical intake questions and generic AI-assistant language unless asked. Do not speak or act for the visitor.";
   const message=`Character instructions for this fictional conversation:\n${systemMessage()}\n\nConversation context:\n${context.map(m=>`${m.role==='assistant'?'Paige':'Visitor'}: ${m.content.slice(0,2000)}`).join('\n')}\n\n${direction}\n\nStyle: react to the visitor before introducing a new detail. Sound spontaneous and lightly playful, with subtle flirtation only if the visitor welcomes it. Keep witchy references occasional. Do not recycle jokes, props, tea offers or phrases from previous turns.`;
-  const res=await fetch(settings.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,model:settings.model,temperature:Number(settings.temperature),system:systemMessage(),messages:history.map(({role,content})=>({role,content}))})});
+  const res=await fetch(settings.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,model:settings.model,temperature:Number(settings.temperature),system:systemMessage(),messages:visibleHistory.map(({role,content})=>({role,content}))})});
   let data={};try{data=await res.json()}catch{}
   if(!res.ok)throw new Error(data?.error||data?.message||`Request failed (${res.status})`);
   const text=data?.reply||data?.text||data?.message||data?.choices?.[0]?.message?.content;
