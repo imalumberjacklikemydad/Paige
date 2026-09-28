@@ -1,30 +1,28 @@
-# Paige — PWS V0.3
+# Paige — PWS V0.5
 
-An iPhone-first personal AI character web app, deployed with GitHub Pages.
+An iPhone-friendly character chat app hosted on GitHub Pages. Paige is an adult massage therapist with a warm, quirky voice and a lightly flirtatious tone when welcomed.
 
-## V0.3
+## Features
 
-- Dark purple mobile-first interface
-- OpenAI-compatible endpoint configuration
-- Model, API key and temperature controls
-- Editable Paige system prompt
-- Connection test and configuration status
-- Local chat history with new-conversation confirmation
-- Optional persistent memory field
-- Copy, Regenerate and Continue controls
-- Conversation export to text
-- Loading and error states
-- Installable/offline-capable PWA shell
-- GitHub Pages compatible relative paths
+- Chat with a short opening scene and Paige's portrait in the header and replies
+- Regenerate and Continue controls, plus copy and text export
+- Editable character prompt and optional user-written memory
+- Conversation history saved locally in this browser
+- Installable web app with an offline shell
+- AI requests sent to a Cloudflare Worker, which holds the OpenAI API key as a server-side secret
 
-## Run
+## Live site
 
-The app is static and can be served by GitHub Pages or any static web server. Open Paige Settings and enter an endpoint, model and API key.
+https://imalumberjacklikemydad.github.io/Paige/
 
-## Privacy / prototype note
+The site and Worker are separate deployments. Publishing this repository updates the GitHub Pages frontend; it does not automatically replace the Worker running on Cloudflare.
 
-Conversation history, Paige memory, settings and any API key are stored in the browser's localStorage on that device. This keeps the prototype simple and private to the browser profile, but browser-side API keys are not an appropriate production credential architecture.
+## Privacy and deployment
 
-## Next
+Never put an OpenAI API key in frontend settings, JavaScript or this repository. Add it as the `OPENAI_API_KEY` secret in Cloudflare. Chat history and memory live in this browser's local storage; changing devices or clearing site data may remove them. Export a conversation before clearing browser data.
 
-Planned work includes stronger structured memory, conversation management, streaming responses, optional local/on-device inference where browser support permits it, and character-creation tooling.
+The Worker endpoint is reachable from the public site and should be treated as a private prototype. Origin checks alone do not authenticate callers or cap API spending; add appropriate access and usage limits before inviting others to use it.
+
+## Current behaviour
+
+Paige's default prompt is tuned for natural, concise conversation, understated flirting and occasional quirky references. Existing untouched default prompts are migrated automatically. A prompt you edited yourself remains yours. The frontend sends the conversation context and character instructions in the `message` field expected by the currently deployed Worker.
