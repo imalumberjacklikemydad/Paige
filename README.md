@@ -1,4 +1,4 @@
-# Paige — PWS V0.5
+# Paige — PWS V0.8
 
 An iPhone-friendly character chat app hosted on GitHub Pages. Paige is an adult massage therapist with a warm, quirky voice and a lightly flirtatious tone when welcomed.
 
@@ -25,4 +25,4 @@ The Worker endpoint is reachable from the public site and should be treated as a
 
 ## Current behaviour
 
-Paige's default prompt is tuned for natural, concise conversation, understated flirting and occasional quirky references. Existing untouched default prompts are migrated automatically. A prompt you edited yourself remains yours. The frontend sends the conversation context and character instructions in the `message` field expected by the currently deployed Worker.
+Paige's default prompt is tuned for natural conversation, understated flirtation and careful scene awareness: she should respond to spoken dialogue and observable actions, not private narration in visitor messages. Existing untouched default prompts are migrated automatically. A prompt you edited yourself remains yours. The frontend sends the conversation context and character instructions in the `message` field expected by the currently deployed Worker.
