@@ -56,7 +56,7 @@ const server = http.createServer(async (req, res) => {
           model: String(body.model || model).slice(0, 200),
           stream: false,
           messages: [{ role: 'system', content: system }, ...messages],
-          options: { temperature: Math.min(1.4, Math.max(0, Number(body.temperature) || 0.8)), num_ctx: 8192, num_predict: 700 }
+          options: { temperature: Math.min(1.4, Math.max(0, Number(body.temperature) || 0.8)), num_ctx: 8192, num_predict: 350 }
         }),
         signal: AbortSignal.timeout(180000)
       });
