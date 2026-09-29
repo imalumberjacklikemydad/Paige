@@ -30,7 +30,7 @@ async function requestAI(history){
   if(!configured())throw new Error('Paige’s secure AI backend still needs its one-time deployment setup. No API key should be entered into this website.');
   const continuing=history.at(-1)?.hidden===true;
   const visibleHistory=history.filter(m=>!m.hidden);
-  const context=continuing?visibleHistory.slice(1).slice(-8):visibleHistory.slice(0,-1).slice(-14);
+  const context=continuing?visibleHistory.slice(1,-1).slice(-8):visibleHistory.slice(0,-1).slice(-14);
   const currentTurn=visibleHistory.at(-1);
   const firstTurn=!visibleHistory.some(m=>m.role==='assistant');
   const direction=continuing
