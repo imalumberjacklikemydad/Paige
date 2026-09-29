@@ -1,4 +1,4 @@
-# Paige — PWS V0.15
+# Paige — PWS V0.16 (local trial)
 
 An iPhone-friendly character chat app hosted on GitHub Pages. Paige is an adult massage therapist with a warm, quirky voice and a lightly flirtatious tone when welcomed.
 
@@ -16,6 +16,21 @@ An iPhone-friendly character chat app hosted on GitHub Pages. Paige is an adult 
 https://imalumberjacklikemydad.github.io/Paige/
 
 The site and Worker are separate deployments. Publishing this repository updates the GitHub Pages frontend; it does not automatically replace the Worker running on Cloudflare.
+
+## Run Paige locally on HOMEPC
+
+This trial uses the existing chat interface with Ollama on your PC. It does not require an OpenAI API key or change the public Cloudflare Worker.
+
+1. Install [Node.js LTS](https://nodejs.org/en/download) if `node --version` does not work in PowerShell. Ollama must also be running with the model `hf.co/TheDrummer/Rocinante-X-12B-v1-GGUF:Q4_K_M` already downloaded.
+2. Download this branch as a ZIP from GitHub and extract it to a folder, or clone the branch. In PowerShell, change to the extracted `Paige` folder (the one containing `index.html`).
+3. Run `node .\local\server.mjs` and leave that PowerShell window open.
+4. Open **http://127.0.0.1:8000/** on HOMEPC. The badge should say **Local model on HOMEPC**. Start a new conversation to evaluate the shorter local character prompt. If settings were previously saved on this local address, inspect the Character section and reset it to the default local prompt if needed.
+
+The server listens only on `127.0.0.1:8000` and sends chat requests to Ollama on the same PC. Conversation history remains in this browser's local storage. The model can be changed in Paige Settings if it is already available in Ollama; the default is Rocinante X 12B. If Ollama cannot be reached, check it is running and that the model name matches `ollama list`.
+
+### Use from your iPhone privately
+
+Once the local chat works, install Tailscale on HOMEPC and iPhone, sign both into the same tailnet, and run `tailscale serve --bg 8000` on HOMEPC. Open the private HTTPS URL printed by `tailscale serve status` on the iPhone. Keep the PC and local Node server running while chatting. Use **Serve**, not Funnel: Funnel makes a service public. The iPhone and PC use separate browser storage, so existing chats will not automatically sync. Do not forward port 8000 on your router or publish Ollama's port 11434.
 
 ## Privacy and deployment
 
