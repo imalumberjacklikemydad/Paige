@@ -22,6 +22,16 @@ function send(res, status, body, type = 'application/json; charset=utf-8') {
   res.end(type.startsWith('application/json') ? JSON.stringify(body) : body);
 }
 
+function keepOneQuestion(reply) {
+  const first = reply.indexOf('?');
+  if (first < 0 || reply.indexOf('?', first + 1) < 0) return reply;
+  // A small local model sometimes adds another intake question after its first one.
+  // Keep the first conversational opening, without showing a second prompt.
+  let result = reply.slice(0, first + 1);
+  if ((result.match(/"/g) || []).length % 2) result += '"';
+  return result.trim();
+}
+
 async function readJSON(req) {
   let data = '';
   for await (const chunk of req) {
@@ -64,7 +74,7 @@ const server = http.createServer(async (req, res) => {
       if (!upstream.ok) return send(res, 502, { error: result.error || `Ollama returned ${upstream.status}.` });
       const text = result.message?.content?.trim();
       if (!text) return send(res, 502, { error: 'Ollama returned no text.' });
-      return send(res, 200, { text });
+      return send(res, 200, { text: keepOneQuestion(text) });
     } catch {
       return send(res, 502, { error: 'Could not reach Ollama. Check that it is running and the model has downloaded.' });
     }
