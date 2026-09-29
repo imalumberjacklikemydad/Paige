@@ -39,7 +39,15 @@ async function requestAI(history){
   const continuationRules=continuing?" The last user turn below asks for continuation. Continue the latest scene beat with a fresh action and line, without restating the previous reply. Honour any still-current quiet request.":"";
   const outbound=visibleHistory.slice(-12).map(({role,content})=>({role,content}));
   if(continuing)outbound.push({role:'user',content:'Continue Paige’s latest reply from the current scene beat. Do not repeat it or change to an earlier topic. Do not speak, act or feel for the visitor.'});
-  const res=await fetch(settings.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:settings.model,temperature:Number(settings.temperature),system:turnRules+quietRules+continuationRules+"\n\nCharacter instructions:\n"+systemMessage(),messages:outbound})});
+  // The live Worker still requires "message"; keep it alongside the structured fields.
+  const activeTurn=outbound.at(-1)?.content||'';
+  const earlier=visibleHistory.slice(0,continuing?undefined:-1).slice(-8);
+  const legacyMessage="Character instructions:\n"+systemMessage()+"\n\nTurn priority:\n"+turnRules+quietRules+continuationRules+
+    "\n\nEarlier turns for continuity only (do not answer these now):\n"+
+    earlier.map(m=>(m.role==='assistant'?'Paige: ':'Visitor: ')+m.content.slice(0,1200)).join("\n")+
+    "\n\nCURRENT visitor turn to answer now:\n"+activeTurn+
+    "\n\nRespond specifically to the CURRENT turn above. Do not reply to an earlier turn, repeat Paige's last answer, or change subject. Use at most one question or invitation to answer.";
+  const res=await fetch(settings.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:legacyMessage,model:settings.model,temperature:Number(settings.temperature),system:turnRules+quietRules+continuationRules+"\n\nCharacter instructions:\n"+systemMessage(),messages:outbound})});
   let data={};try{data=await res.json()}catch{}
   if(!res.ok)throw new Error(data?.error||data?.message||`Request failed (${res.status})`);
   const text=data?.reply||data?.text||data?.message||data?.choices?.[0]?.message?.content;
