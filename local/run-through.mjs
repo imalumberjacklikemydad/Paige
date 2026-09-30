@@ -11,6 +11,16 @@ const reportLines = [];
 function report(line = '') { console.log(line); reportLines.push(line); }
 const origin = 'http://127.0.0.1:8000';
 const nodes = new Map();
+let lastResult;
+async function diagnosticFetch(url, options) {
+  if (String(url).endsWith('/api/chat') && options?.body) {
+    options = { ...options, body: JSON.stringify({ ...JSON.parse(options.body), diagnostics: true }) };
+    const response = await fetch(url, options);
+    lastResult = await response.clone().json();
+    return response;
+  }
+  return fetch(url, options);
+}
 function node() {
   return {
     value: '', style: {}, dataset: {}, classList: { add() {} }, options: [],
@@ -26,7 +36,7 @@ const context = {
   },
   localStorage: { getItem() { return null; }, setItem() {}, removeItem() {} },
   requestAnimationFrame(callback) { callback(); }, setTimeout() {},
-  fetch, Date, Number, String, Array, JSON, Option: class {}, console
+  fetch: diagnosticFetch, Date, Number, String, Array, JSON, Option: class {}, console
 };
 vm.createContext(context);
 vm.runInContext(source, context, { filename: 'app.js' });
@@ -35,9 +45,17 @@ const opening = vm.runInContext('OPENING', context);
 async function exchange(history, visitor) {
   history.push({ role: 'user', content: visitor });
   context.testHistory = history;
+  lastResult = undefined;
   const reply = await vm.runInContext('requestAI(testHistory)', context);
   history.push({ role: 'assistant', content: reply });
   report(`\nYOU: ${visitor}\nPAIGE: ${reply}\n`);
+  if (lastResult?.diagnostics) {
+    const d = lastResult.diagnostics;
+    report(`Server V${d.version}; draft questions: ${d.originalQuestionCount}; final questions: ${d.finalQuestionCount}; revised: ${d.revised}; edit failed: ${d.revisionFailed}.`);
+    if (d.revised || d.revisionFailed) report(`ORIGINAL DRAFT: ${lastResult.rawText}\n`);
+  } else {
+    report('REVIEW  Server supplied no diagnostics. Restart the updated local server.');
+  }
   return reply;
 }
 
@@ -59,7 +77,7 @@ try {
   report(`Question marks per reply: ${questionCounts.join(', ')} (expected: no more than 1; the quiet reply should have 0).`);
   const signals = [
     ['Early arrival acknowledged', /\b(?:early|ahead|half hour|before I expected)\b/i.test(replies[0])],
-    ['Arrival avoided starting treatment', !/\b(?:massage table|treatment room|wash my hands|getting started)\b/i.test(replies[0])],
+    ['Arrival avoided starting treatment', !/\b(?:massage table|treatment room|wash my hands|getting started|get started)\b/i.test(replies[0])],
     ['Work topic followed without an intake callback', !/\b(?:massage|pressure|appointment|tea|cuppa)\b/i.test(replies[1])],
     ['Work response has more than a brief interjection', workDialogue.trim().split(/\s+/).length >= 8],
     ['Quiet request received no question', questionCounts[2] === 0],
