@@ -95,7 +95,7 @@ const server = http.createServer(async (req, res) => {
         text: result.text,
         ...(body.diagnostics === true ? {
           rawText: draft,
-          diagnostics: { version: '0.16.7', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
+          diagnostics: { version: '0.16.8', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
         } : {})
       });
     } catch {
