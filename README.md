@@ -53,3 +53,7 @@ The local default now includes Paige’s original appearance, relaxed clothing, 
 ### Conversation correction (V0.16.9)
 
 The complete character background is retained more concisely, with examples of dialogue pacing. Current-turn rules follow the background so arrival, quiet and topic changes remain prominent. The report now flags invented visitor body language and common cases of claiming the visitor’s D&D character, and includes a further subject change. Custom prompts and saved conversations remain preserved.
+
+### Quiet-request fix (V0.16.10)
+
+Explicit quiet detection now recognizes “sit quietly” and “don’t ask me anything”, including curly apostrophes. The stronger quiet instructions were previously skipped for the scripted test wording. Current-turn instructions also clarify direct timing answers and prohibit stacking a reassurance question after a conversational question. The character profile and unchanged model output are retained.
