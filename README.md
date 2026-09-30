@@ -28,6 +28,8 @@ This trial uses the existing chat interface with Ollama on your PC. It does not 
 
 The server listens only on `127.0.0.1:8000` and sends chat requests to Ollama on the same PC. Conversation history remains in this browser's local storage. The model can be changed in Paige Settings if it is already available in Ollama; the default is Rocinante X 12B. If Ollama cannot be reached, check it is running and that the model name matches `ollama list`.
 
+To run five fictional dialogue checks using the actual local model, keep the server and Ollama running and open another PowerShell window in this folder. Run `node .\local\run-through.mjs`. The script prints the replies and a few basic continuity checks. It does not read your saved conversations or settings. Copy the output to share it for review; responses can vary between runs.
+
 ### Use from your iPhone privately
 
 Once the local chat works, install Tailscale on HOMEPC and iPhone, sign both into the same tailnet, and run `tailscale serve --bg 8000` on HOMEPC. Open the private HTTPS URL printed by `tailscale serve status` on the iPhone. Keep the PC and local Node server running while chatting. Use **Serve**, not Funnel: Funnel makes a service public. The iPhone and PC use separate browser storage, so existing chats will not automatically sync. Do not forward port 8000 on your router or publish Ollama's port 11434.
