@@ -51,8 +51,9 @@ async function exchange(history, visitor) {
   report(`\nYOU: ${visitor}\nPAIGE: ${reply}\n`);
   if (lastResult?.diagnostics) {
     const d = lastResult.diagnostics;
-    report(`Server V${d.version}; draft questions: ${d.originalQuestionCount}; final questions: ${d.finalQuestionCount}; revised: ${d.revised}; edit failed: ${d.revisionFailed}.`);
+    report(`Server V${d.version}; model questions: ${d.originalQuestionCount}; shown questions: ${d.finalQuestionCount}; editing: ${d.editing || 'older server'}.`);
     if (d.revised || d.revisionFailed) report(`ORIGINAL DRAFT: ${lastResult.rawText}\n`);
+    if (d.finalQuestionCount > 1) report('REVIEW  Multiple questions in the model reply; no automatic rewrite was applied.');
   } else {
     report('REVIEW  Server supplied no diagnostics. Restart the updated local server.');
   }
@@ -69,6 +70,7 @@ try {
   replies.push(await exchange(history, "Actually, I'd rather talk. Something odd happened at work today."));
   replies.push(await exchange(history, "Can we sit quietly for a bit? You can say a little, but please don't ask me anything."));
   replies.push(await exchange(history, "Changing the subject: I made a D&D wizard named Millie, and she's very particular about being called Millicent."));
+  replies.push(await exchange(history, "Let's leave D&D there. I went for a walk on the beach this morning, and the sea was beautifully calm."));
   report('\nNew scene: test whether Paige treats private narration as unheard.');
   const privateHistory = [{ role: 'assistant', content: opening }];
   const privateReply = await exchange(privateHistory, 'I say, "It has been one of those days." In my private thoughts, I worry about a broken printer at work, but I do not say that aloud.');
@@ -81,8 +83,11 @@ try {
     ['Work topic followed without an intake callback', !/\b(?:massage|pressure|appointment|tea|cuppa)\b/i.test(replies[1])],
     ['Work response has more than a brief interjection', workDialogue.trim().split(/\s+/).length >= 8],
     ['Quiet request received no question', questionCounts[2] === 0],
-    ['Quiet reply avoided a new prop or subject', !/\b(?:crystal|tarot|diffuser|something weird|carry something)\b/i.test(replies[2])],
+    ['Quiet reply avoided a new prop or subject', !/\b(?:crystal|quartz|pendant|tarot|diffuser|something weird|carry something)\b/i.test(replies[2])],
     ['Millie or wizard acknowledged specifically', /\b(?:Millie|Millicent|wizard|D&D)\b/i.test(replies[3])],
+    ['Wizard was not claimed as Paige’s companion', !/\b(?:my (?:wizard|familiar|companion)|with me for|found her|her as a .*familiar|where Millicent had|she(?:’s|'s| is) in the library)\b/i.test(replies[3])],
+    ['Beach subject change followed', /\b(?:beach|sea|ocean|waves|shore|walk)\b/i.test(replies[4]) && !/\b(?:Millie|Millicent|wizard|D&D|spell)\b/i.test(replies[4])],
+    ['Private scene avoided invented visitor body language', !/\b(?:tension in your shoulders|you (?:step|walk) inside|your (?:tense shoulders|worried expression|tired eyes))\b/i.test(privateReply)],
     ['Unspoken printer thought stayed private', !/\bprinter\b/i.test(privateReply)],
     ['At most one question per reply', questionCounts.every(count => count <= 1)]
   ];
