@@ -28,7 +28,7 @@ This trial uses the existing chat interface with Ollama on your PC. It does not 
 
 The server listens only on `127.0.0.1:8000` and sends chat requests to Ollama on the same PC. Conversation history remains in this browser's local storage. The model can be changed in Paige Settings if it is already available in Ollama; the default is Rocinante X 12B. If Ollama cannot be reached, check it is running and that the model name matches `ollama list`.
 
-To run five fictional dialogue checks using the actual local model, keep the server and Ollama running and open another PowerShell window in this folder. Run `node .\local\run-through.mjs`. The script prints the replies and saves a UTF-8 `paige-run-through.txt` report in the main Paige folder, with a few basic continuity checks. It does not read your saved conversations or settings. Copy the output to share it for review; responses can vary between runs. The report also shows the server version, question counts and original draft whenever a reply was revised. The local server makes one extra editing request when a draft contains multiple question marks, which can add delay. If the edit fails, it preserves the complete draft; the report flags this for review rather than silently cutting off the conversation. Restart the local server after updating its files.
+To run six fictional dialogue checks using the actual local model, keep the server and Ollama running and open another PowerShell window in this folder. Run `node .\local\run-through.mjs`. The script prints the replies and saves a UTF-8 `paige-run-through.txt` report in the main Paige folder, with a few basic continuity checks. It does not read your saved conversations or settings. Copy the output to share it for review; responses can vary between runs. The report also shows the server version and question counts. V0.16.9 removes the second model editing request because it could invent facts. Model replies are shown unchanged, with one-question behaviour instructed in the prompt and checked in the report. These checks are limited clues; they cannot establish that a response is coherent or faithful to the scene. Restart the local server after updating its files.
 
 ### Use from your iPhone privately
 
@@ -49,3 +49,7 @@ Paige's default prompt prioritizes the latest visitor turn, follows topic change
 ### Local character profile (V0.16.8)
 
 The local default now includes Paige’s original appearance, relaxed clothing, private practice, alternative interests, room, caring personality and attraction preferences. These remain background character facts rather than a checklist to repeat in every reply. Chemistry stays gradual and responsive to the established adult visitor. The previous untouched local default upgrades automatically; custom prompts and saved conversations are preserved.
+
+### Conversation correction (V0.16.9)
+
+The complete character background is retained more concisely, with examples of dialogue pacing. Current-turn rules follow the background so arrival, quiet and topic changes remain prominent. The report now flags invented visitor body language and common cases of claiming the visitor’s D&D character, and includes a further subject change. Custom prompts and saved conversations remain preserved.
