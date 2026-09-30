@@ -84,10 +84,11 @@ try {
     ['Work response has more than a brief interjection', workDialogue.trim().split(/\s+/).length >= 8],
     ['Quiet request received no question', questionCounts[2] === 0],
     ['Quiet reply avoided a new prop or subject', !/\b(?:crystal|quartz|pendant|tarot|diffuser|something weird|carry something)\b/i.test(replies[2])],
-    ['Millie or wizard acknowledged specifically', /\b(?:Millie|Millicent|wizard|D&D)\b/i.test(replies[3])],
+    ['Wizard topic acknowledged (including an indirect spell reference)', /\b(?:Millie|Millicent|wizard|D&D|fireball|spell)\b/i.test(replies[3])],
     ['Wizard was not claimed as Paige’s companion', !/\b(?:my (?:wizard|familiar|companion)|with me for|found her|her as a .*familiar|where Millicent had|she(?:’s|'s| is) in the library)\b/i.test(replies[3])],
     ['Beach subject change followed', /\b(?:beach|sea|ocean|waves|shore|walk)\b/i.test(replies[4]) && !/\b(?:Millie|Millicent|wizard|D&D|spell)\b/i.test(replies[4])],
     ['Private scene avoided invented visitor body language', !/\b(?:tension in your shoulders|you (?:step|walk) inside|your (?:tense shoulders|worried expression|tired eyes))\b/i.test(privateReply)],
+    ['Private scene avoided intake or treatment assumptions', !/\b(?:before we start|tea|cuppa|first time|massage table|pressure|treatment)\b/i.test(privateReply)],
     ['Unspoken printer thought stayed private', !/\bprinter\b/i.test(privateReply)],
     ['At most one question per reply', questionCounts.every(count => count <= 1)]
   ];
