@@ -36,26 +36,6 @@ async function generate(payload) {
   return text;
 }
 
-async function reviseQuestions(draft, payload) {
-  if (questionCount(draft) <= 1) return { text: draft, revised: false, revisionFailed: false };
-  try {
-    const text = await generate({
-      ...payload,
-      messages: [
-        { role: 'system', content: 'Edit the supplied fictional dialogue, rather than answering it. Preserve its dialogue, actions, personality and meaning. Keep at most one conversational question or invitation, about the main topic. Convert extra questions, including rhetorical interjections such as Oh?, into statements. Do not cut the reply short or add new facts. Return only the edited reply.' },
-        { role: 'user', content: draft }
-      ],
-      options: { ...payload.options, temperature: 0.2 }
-    });
-    // Reject an edit that repeats the problem or discards most of the response.
-    if (questionCount(text) > 1 || text.length < draft.length * 0.5) throw new Error('Incomplete edit.');
-    return { text, revised: text !== draft, revisionFailed: false };
-  } catch {
-    // Preserve the conversation if editing fails; never silently chop the draft.
-    return { text: draft, revised: false, revisionFailed: true };
-  }
-}
-
 async function readJSON(req) {
   let data = '';
   for await (const chunk of req) {
@@ -90,12 +70,13 @@ const server = http.createServer(async (req, res) => {
         options: { temperature: Number.isFinite(temperature) ? Math.min(1.4, Math.max(0, temperature)) : 0.8, num_ctx: 8192, num_predict: 350 }
       };
       const draft = await generate(payload);
-      const result = await reviseQuestions(draft, payload);
+      // Show the model reply unchanged. A second generation can invent scene facts.
+      const result = { text: draft, revised: false, revisionFailed: false };
       return send(res, 200, {
         text: result.text,
         ...(body.diagnostics === true ? {
           rawText: draft,
-          diagnostics: { version: '0.16.8', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
+          diagnostics: { version: '0.16.9', editing: 'disabled', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
         } : {})
       });
     } catch {
