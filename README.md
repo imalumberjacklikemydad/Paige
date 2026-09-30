@@ -57,3 +57,7 @@ The complete character background is retained more concisely, with examples of d
 ### Quiet-request fix (V0.16.10)
 
 Explicit quiet detection now recognizes “sit quietly” and “don’t ask me anything”, including curly apostrophes. The stronger quiet instructions were previously skipped for the scripted test wording. Current-turn instructions also clarify direct timing answers and prohibit stacking a reassurance question after a conversational question. The character profile and unchanged model output are retained.
+
+### Natural question pacing (V0.16.11)
+
+The local default now prioritizes one conversational thread rather than a strict question-mark limit. Short related pairs such as “What happened? You okay?” are allowed. Quiet requests still require no questions. Run-through counts are descriptive and cannot judge whether questions are related. Existing unchanged local defaults migrate; custom prompts are preserved.
