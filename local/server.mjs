@@ -22,14 +22,38 @@ function send(res, status, body, type = 'application/json; charset=utf-8') {
   res.end(type.startsWith('application/json') ? JSON.stringify(body) : body);
 }
 
-function keepOneQuestion(reply) {
-  const first = reply.indexOf('?');
-  if (first < 0 || reply.indexOf('?', first + 1) < 0) return reply;
-  // A small local model sometimes adds another intake question after its first one.
-  // Keep the first conversational opening, without showing a second prompt.
-  let result = reply.slice(0, first + 1);
-  if ((result.match(/"/g) || []).length % 2) result += '"';
-  return result.trim();
+function questionCount(reply) { return (reply.match(/\?/g) || []).length; }
+
+async function generate(payload) {
+  const upstream = await fetch(ollamaURL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload), signal: AbortSignal.timeout(180000)
+  });
+  const result = await upstream.json();
+  if (!upstream.ok) throw new Error(result.error || `Ollama returned ${upstream.status}.`);
+  const text = result.message?.content?.trim();
+  if (!text) throw new Error('Ollama returned no text.');
+  return text;
+}
+
+async function reviseQuestions(draft, payload) {
+  if (questionCount(draft) <= 1) return { text: draft, revised: false, revisionFailed: false };
+  try {
+    const text = await generate({
+      ...payload,
+      messages: [
+        { role: 'system', content: 'Edit the supplied fictional dialogue, rather than answering it. Preserve its dialogue, actions, personality and meaning. Keep at most one conversational question or invitation, about the main topic. Convert extra questions, including rhetorical interjections such as Oh?, into statements. Do not cut the reply short or add new facts. Return only the edited reply.' },
+        { role: 'user', content: draft }
+      ],
+      options: { ...payload.options, temperature: 0.2 }
+    });
+    // Reject an edit that repeats the problem or discards most of the response.
+    if (questionCount(text) > 1 || text.length < draft.length * 0.5) throw new Error('Incomplete edit.');
+    return { text, revised: text !== draft, revisionFailed: false };
+  } catch {
+    // Preserve the conversation if editing fails; never silently chop the draft.
+    return { text: draft, revised: false, revisionFailed: true };
+  }
 }
 
 async function readJSON(req) {
@@ -59,22 +83,21 @@ const server = http.createServer(async (req, res) => {
     }
     const system = String(body.system || '').slice(0, 12000);
     try {
-      const upstream = await fetch(ollamaURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: String(body.model || model).slice(0, 200),
-          stream: false,
-          messages: [{ role: 'system', content: system }, ...messages],
-          options: { temperature: Math.min(1.4, Math.max(0, Number(body.temperature) || 0.8)), num_ctx: 8192, num_predict: 350 }
-        }),
-        signal: AbortSignal.timeout(180000)
+      const temperature = Number(body.temperature);
+      const payload = {
+        model: String(body.model || model).slice(0, 200), stream: false,
+        messages: [{ role: 'system', content: system }, ...messages],
+        options: { temperature: Number.isFinite(temperature) ? Math.min(1.4, Math.max(0, temperature)) : 0.8, num_ctx: 8192, num_predict: 350 }
+      };
+      const draft = await generate(payload);
+      const result = await reviseQuestions(draft, payload);
+      return send(res, 200, {
+        text: result.text,
+        ...(body.diagnostics === true ? {
+          rawText: draft,
+          diagnostics: { version: '0.16.7', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
+        } : {})
       });
-      const result = await upstream.json();
-      if (!upstream.ok) return send(res, 502, { error: result.error || `Ollama returned ${upstream.status}.` });
-      const text = result.message?.content?.trim();
-      if (!text) return send(res, 502, { error: 'Ollama returned no text.' });
-      return send(res, 200, { text: keepOneQuestion(text) });
     } catch {
       return send(res, 502, { error: 'Could not reach Ollama. Check that it is running and the model has downloaded.' });
     }
