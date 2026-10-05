@@ -10,6 +10,7 @@ const ollamaURL = process.env.PAIGE_OLLAMA_URL || 'http://127.0.0.1:11434/api/ch
 const allowedFiles = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
+  ['/scenarios.js', ['scenarios.js', 'text/javascript; charset=utf-8']],
   ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
   ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
   ['/sw.js', ['sw.js', 'text/javascript; charset=utf-8']],
@@ -76,7 +77,7 @@ const server = http.createServer(async (req, res) => {
         text: result.text,
         ...(body.diagnostics === true ? {
           rawText: draft,
-          diagnostics: { version: '0.16.11', editing: 'disabled', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
+          diagnostics: { version: '0.17.0', editing: 'disabled', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
         } : {})
       });
     } catch {
