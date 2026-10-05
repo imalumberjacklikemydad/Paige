@@ -23,7 +23,7 @@ async function diagnosticFetch(url, options) {
 }
 function node() {
   return {
-    value: '', style: {}, dataset: {}, classList: { add() {} }, options: [],
+    value: '', style: {}, dataset: {}, children: [], showModal() {}, close() {}, classList: { add() {} }, options: [],
     addEventListener() {}, append() {}, setAttribute() {}, replaceChildren() {},
     scrollTop: 0, scrollHeight: 0
   };
@@ -39,6 +39,7 @@ const context = {
   fetch: diagnosticFetch, Date, Number, String, Array, JSON, Option: class {}, console
 };
 vm.createContext(context);
+vm.runInContext(await readFile(join(root, 'scenarios.js'), 'utf8'), context, { filename: 'scenarios.js' });
 vm.runInContext(source, context, { filename: 'app.js' });
 const opening = vm.runInContext('OPENING', context);
 
