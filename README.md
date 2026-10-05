@@ -61,3 +61,7 @@ Explicit quiet detection now recognizes “sit quietly” and “don’t ask me 
 ### Natural question pacing (V0.16.11)
 
 The local default now prioritizes one conversational thread rather than a strict question-mark limit. Short related pairs such as “What happened? You okay?” are allowed. Quiet requests still require no questions. Run-through counts are descriptive and cannot judge whether questions are related. Existing unchanged local defaults migrate; custom prompts are preserved.
+
+### Scenario menu (V0.17.0)
+
+The + button opens a menu with 16 new scenarios and the original studio arrival. Each has its own role, setting and opening message. Choosing a scenario saves the current conversation under Saved chats in the menu; select it to resume. Saved conversations and settings stay in this browser. A first visit opens the menu automatically. Non-studio scenarios override the default massage occupation and setting while retaining Paige’s appearance and personality. No model request is needed to display the menu or opening.
