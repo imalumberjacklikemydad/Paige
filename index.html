@@ -9,32 +9,33 @@
   <meta name="apple-mobile-web-app-title" content="Paige" />
   <title>Paige</title>
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="styles.css?v=0.17.0" />
+  <link rel="stylesheet" href="styles.css?v=0.18.0" />
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand-lockup"><img class="brand-avatar" src="./assets/paige-avatar.webp" alt="" width="48" height="48"><div><div class="eyebrow">PWS V0.17.0</div><h1>Paige</h1><div id="connectionBadge" class="connection-badge">Secure backend setup required</div></div></div>
+      <div class="brand-lockup"><span id="saigeAvatar" class="saige-avatar" aria-hidden="true" hidden>S</span><img id="brandAvatar" class="brand-avatar" src="./assets/paige-avatar.webp" alt="" width="48" height="48"><div><div class="eyebrow">PWS V0.18.0</div><h1 id="characterName">Paige</h1><div id="connectionBadge" class="connection-badge">Secure backend setup required</div></div></div>
       <div class="top-actions"><button id="newChatButton" class="icon-button" aria-label="Choose a scenario" title="Scenarios and saved chats">＋</button><button id="settingsButton" class="icon-button" aria-label="AI settings">⚙︎</button></div>
     </header>
     <div id="scenarioLabel" class="scenario-label"></div>
+    <aside id="saigeNotice" class="saige-notice" hidden>Saige is an AI companion for talking and venting, not a therapist or emergency service. Chats are saved in this browser. <details><summary>Human support</summary><p>Immediate danger: <a href="tel:000">000</a>. Lifeline: <a href="tel:131114">13 11 14</a>. MensLine: <a href="tel:1300789978">1300 78 99 78</a>. <a href="https://www.beyondblue.org.au/get-support" target="_blank" rel="noopener noreferrer">Beyond Blue</a>.</p></details></aside>
     <main id="chat" class="chat" aria-live="polite"></main>
     <form id="composer" class="composer"><textarea id="messageInput" rows="1" placeholder="Message Paige…" aria-label="Message Paige"></textarea><button id="sendButton" type="submit">Send</button></form>
   </div>
   <dialog id="settingsDialog">
     <form method="dialog" class="settings-card">
-      <div class="settings-heading"><div><div class="eyebrow">PWS V0.17.0</div><h2>Paige Settings</h2></div><button value="cancel" class="icon-button" aria-label="Close settings">×</button></div>
-      <section class="settings-section" id="speechSettings"><h3>Voice</h3><p>Uses voices Safari makes available. Downloaded iPhone voices may not appear here; you can use iPhone’s Speak Selection to hear them. No extra speech API charge.</p><label>Paige’s voice<select id="voiceURI"><option value="">System default</option></select></label><label>Speaking speed <span id="speechRateValue">1.0×</span><input id="speechRate" type="range" min="0.7" max="1.5" step="0.1" value="1" /></label><button id="previewVoice" type="button" class="secondary" data-idle-label="Preview voice" data-playing-label="Stop preview">Preview voice</button></section>
+      <div class="settings-heading"><div><div class="eyebrow">PWS V0.18.0</div><h2 id="settingsHeading">Paige Settings</h2></div><button value="cancel" class="icon-button" aria-label="Close settings">×</button></div>
+      <section class="settings-section" id="speechSettings"><h3>Voice</h3><p>Uses voices Safari makes available. Downloaded iPhone voices may not appear here; you can use iPhone’s Speak Selection to hear them. No extra speech API charge.</p><label>Reading voice<select id="voiceURI"><option value="">System default</option></select></label><label>Speaking speed <span id="speechRateValue">1.0×</span><input id="speechRate" type="range" min="0.7" max="1.5" step="0.1" value="1" /></label><button id="previewVoice" type="button" class="secondary" data-idle-label="Preview voice" data-playing-label="Stop preview">Preview voice</button></section>
       <section class="settings-section"><h3>AI connection</h3><p>On HOMEPC, Paige connects to Ollama through the local server. The public GitHub Pages version continues to use its Cloudflare backend.</p><label>Backend URL<input id="endpoint" type="url" placeholder="https://your-paige-backend.example.com/api/chat" /></label><label>Model<input id="model" type="text" placeholder="gpt-5.6" /></label><label>Temperature <span id="temperatureValue"></span><input id="temperature" type="range" min="0" max="2" step="0.1" /></label></section>
-      <section class="settings-section"><h3>Character</h3><label>Paige system prompt<textarea id="systemPrompt" rows="8"></textarea></label></section>
-      <section class="settings-section"><h3>Conversation</h3><label class="toggle-row"><input id="includeMemory" type="checkbox" /> Keep a compact memory of important details</label><label>Memory<textarea id="memory" rows="5" placeholder="Facts Paige should remember across chats…"></textarea></label><button id="exportChat" type="button" class="secondary wide">Export conversation</button></section>
+      <section class="settings-section"><h3>Character</h3><label><span id="promptLabel">Paige system prompt</span><textarea id="systemPrompt" rows="8"></textarea></label></section>
+      <section class="settings-section"><h3>Conversation</h3><label class="toggle-row"><input id="includeMemory" type="checkbox" /> Include my written memory for this persona</label><label><span id="memoryLabel">Paige memory</span><textarea id="memory" rows="5" placeholder="Facts Paige should remember across chats…"></textarea></label><button id="exportChat" type="button" class="secondary wide">Export conversation</button></section>
       <div class="settings-actions"><button id="testConnection" type="button" class="secondary">Test connection</button><button id="saveSettings" type="button">Save</button></div><p id="settingsStatus" class="status"></p>
     </form>
   </dialog>
   <dialog id="scenarioDialog" aria-labelledby="scenarioHeading">
     <div class="scenario-menu">
-      <div class="settings-heading"><div><div class="eyebrow">A different beginning</div><h2 id="scenarioHeading">Where do you meet Paige?</h2></div><button id="closeScenarios" type="button" class="icon-button" aria-label="Close scenario menu">×</button></div>
-      <p class="scenario-intro">Same Paige. A new place, a new role, a chance to see what happens.</p>
+      <div class="settings-heading"><div><div class="eyebrow">A different beginning</div><h2 id="scenarioHeading">Who would you like to talk to?</h2></div><button id="closeScenarios" type="button" class="icon-button" aria-label="Close scenario menu">×</button></div>
+      <p class="scenario-intro">Choose a Paige scenario, or make room to talk with Saige. Each conversation stays separate.</p>
       <button id="resumeCurrent" type="button" class="secondary wide">Continue current chat</button>
       <section id="savedChatsSection" hidden><h3>Your saved chats</h3><div id="savedChats" class="saved-chats"></div></section>
       <h3 class="scenario-section-title">Choose a new beginning</h3>
@@ -42,7 +43,8 @@
       <div id="scenarioGrid" class="scenario-grid"></div>
     </div>
   </dialog>
-  <script src="scenarios.js?v=0.17.0"></script>
-  <script src="app.js?v=0.17.0"></script>
+  <script src="personas.js?v=0.18.0"></script>
+  <script src="scenarios.js?v=0.18.0"></script>
+  <script src="app.js?v=0.18.0"></script>
 </body>
 </html>
