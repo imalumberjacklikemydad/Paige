@@ -1,4 +1,4 @@
-# Paige and Saige — PWS V0.18.0 (local trial)
+# Paige and Saige — PWS V0.19.0 (local trial)
 
 An iPhone-friendly character chat app hosted on GitHub Pages. Paige is an adult massage therapist with a warm, quirky voice and a lightly flirtatious tone when welcomed.
 
@@ -88,3 +88,11 @@ Design sources checked 7 October 2026:
 App routing, settings and storage are verified with mocked model replies. Real Ollama behaviour must be checked on HOMEPC; this release does not claim a validated therapeutic system.
 
 Developer routing checks (no extra dependencies): `node .\local\test-personas.mjs`. These use a fake Ollama reply, not a clinical or real-model test. Browser visual verification was unavailable in the build environment.
+
+### Illustrated scenario menu (V0.19.0)
+
+All 17 Paige scenario cards now have a dedicated photographic thumbnail of Paige in the relevant setting. Saige has a calm sitting-room card, preserving her separate identity. The cards retain their titles, descriptions and normal saved-chat behaviour. Thumbnails are packaged locally, lazy-loaded and included in the offline cache; there are no external image hosts or generation requests when opening the menu.
+
+The images were created with ChatGPT's built-in image generator, using the earlier clothed comparison portrait as the face reference. The original canonical character sheet remains authoritative; the full sheet was rejected by the image tool. Shared prompts prioritise her face, fuller build and teal hair; scene prompts change clothing and surroundings. These are scenario illustrations, not newly approved canonical references. Exact tattoo placement can vary. The prompt set is in `assets/scenarios/prompts.json`.
+
+Update as before: stop the old server, extract the updated branch, run `node .\local\server.mjs`, and refresh the same local address. Check **PWS V0.19.0**. The assets must stay inside `assets/scenarios` in the app folder.

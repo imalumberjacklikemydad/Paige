@@ -1,6 +1,6 @@
 import http from 'node:http';
 import '../personas.js';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,6 +19,11 @@ const allowedFiles = new Map([
   ['/manifest.webmanifest', ['manifest.webmanifest', 'application/manifest+json']],
   ['/assets/paige-avatar.webp', ['assets/paige-avatar.webp', 'image/webp']]
 ]);
+
+// Register only packaged scenario thumbnails; keep the static route allowlist.
+for (const filename of await readdir(join(root, 'assets', 'scenarios'))) {
+  if (/^[a-z]+(?:-[a-z]+)*\.webp$/.test(filename)) allowedFiles.set('/assets/scenarios/' + filename, ['assets/scenarios/' + filename, 'image/webp']);
+}
 
 function send(res, status, body, type = 'application/json; charset=utf-8') {
   res.writeHead(status, { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
@@ -81,7 +86,7 @@ const server = http.createServer(async (req, res) => {
         text: result.text,
         ...(body.diagnostics === true ? {
           rawText: draft,
-          diagnostics: { version: '0.18.0', persona: saige ? 'saige' : 'paige', editing: 'disabled', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
+          diagnostics: { version: '0.19.0', persona: saige ? 'saige' : 'paige', editing: 'disabled', model: payload.model, originalQuestionCount: questionCount(draft), finalQuestionCount: questionCount(result.text), revised: result.revised, revisionFailed: result.revisionFailed }
         } : {})
       });
     } catch {

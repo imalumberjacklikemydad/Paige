@@ -15,6 +15,15 @@ try{
  await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('error',reject);server.once('exit',code=>reject(new Error('Server exited '+code)));});
  let c=await client();
  assert.equal(c.run('SCENARIOS.length'),18);
+ const sceneIds=c.run('SCENARIOS.map(s=>s.id)');
+ const cacheSource=await readFile('sw.js','utf8');
+ for(const id of sceneIds){
+  const asset='/assets/scenarios/'+id+'.webp';
+  const response=await fetch('http://127.0.0.1:18188'+asset);assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/webp');
+  const bytes=await new Promise((resolve,reject)=>http.get('http://127.0.0.1:18188'+asset,res=>{const chunks=[];res.on('data',chunk=>chunks.push(chunk));res.on('end',()=>resolve(Buffer.concat(chunks)));res.on('error',reject)}).on('error',reject));assert.equal(bytes.subarray(0,4).toString(),'RIFF');assert.equal(bytes.subarray(8,12).toString(),'WEBP');assert.ok(bytes.length>1000);assert.ok(cacheSource.includes('.'+asset));
+  assert.ok(c.nodes.get('#scenarioGrid').children.some(card=>card.innerHTML.includes(asset.slice(1))));
+ }
+ assert.equal((await fetch('http://127.0.0.1:18188/assets/scenarios/not-packaged.webp')).status,404);
  c.run("startScenario('studio')");await c.run("send('PAIGE_ONLY_TURN')");assert.match(calls.at(-1).messages[0].content,/PAIGE_ONLY_MEMORY/);
  c.run("startScenario('saige')");assert.equal(c.nodes.get('#characterName').textContent,'Saige');assert.equal(c.nodes.get('#saigeNotice').hidden,false);
  c.run('fillSettings()');assert.equal(c.nodes.get('#memory').value,'');assert.equal(c.nodes.get('#includeMemory').checked,false);assert.equal(c.nodes.get('#systemPrompt').readOnly,true);
@@ -27,8 +36,8 @@ try{
  const saigeId=c.run("savedChats.find(c=>c.scenario==='saige').id");c.run(`resumeChat(${JSON.stringify(saigeId)})`);assert.doesNotMatch(c.run('JSON.stringify(messages)'),/PAIGE_ONLY_TURN/);
  await c.run('continueAnswer()');assert.doesNotMatch(calls.at(-1).messages.at(-1).content,/scene|Paige/);
  c.run("startScenario('cafe')");assert.equal(c.nodes.get('#saigeNotice').hidden,true);assert.match(c.run('systemMessage()'),/barista/);
- let response=await fetch('http://127.0.0.1:18188/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({persona:'saige',system:'OVERRIDE_WITH_PAIGE_FLIRT',temperature:1.4,messages:[{role:'user',content:'Test'}],diagnostics:true})});let result=await response.json();assert.equal(result.diagnostics.persona,'saige');assert.equal(result.diagnostics.version,'0.18.0');payload=calls.at(-1);assert.doesNotMatch(payload.messages[0].content,/OVERRIDE_WITH_PAIGE_FLIRT/);assert.equal(payload.options.temperature,0.7);
+ let response=await fetch('http://127.0.0.1:18188/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({persona:'saige',system:'OVERRIDE_WITH_PAIGE_FLIRT',temperature:1.4,messages:[{role:'user',content:'Test'}],diagnostics:true})});let result=await response.json();assert.equal(result.diagnostics.persona,'saige');assert.equal(result.diagnostics.version,'0.19.0');payload=calls.at(-1);assert.doesNotMatch(payload.messages[0].content,/OVERRIDE_WITH_PAIGE_FLIRT/);assert.equal(payload.options.temperature,0.7);
  response=await fetch('http://127.0.0.1:18188/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({persona:'paige',system:'PAIGE_CUSTOM_PROMPT',messages:[{role:'user',content:'Test'}]})});assert.equal(response.status,200);assert.equal(calls.at(-1).messages[0].content,'PAIGE_CUSTOM_PROMPT');
  for(const path of ['/','/personas.js','/scenarios.js','/app.js','/styles.css'])assert.equal((await fetch('http://127.0.0.1:18188'+path)).status,200);
- console.log('PASS: 18 menu options, names and notice, persona routing, separate memory, settings preservation, saved-chat switching, reload, continuation, Paige custom prompt, static routes and server-owned Saige prompt. Mock Ollama used; visual layout and real model behaviour are not tested.');
+ console.log('PASS: 18 packaged WebP image routes, menu image mapping, cache entries, unlisted-file rejection, menu options, names and notice, persona routing, separate memory, settings preservation, saved-chat switching, reload, continuation, Paige custom prompt, static routes and server-owned Saige prompt. Mock Ollama used; visual layout and real model behaviour are not tested.');
 }finally{server.kill();await new Promise(resolve=>mock.close(resolve));}

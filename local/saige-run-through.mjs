@@ -21,7 +21,7 @@ try {
       const response=await fetch('http://127.0.0.1:8000/api/chat', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({persona:'saige',temperature:0.6,messages,diagnostics:true}),signal:AbortSignal.timeout(190000)});
       const result=await response.json();
       if(!response.ok)throw new Error(result.error||'Request failed');
-      if(result.diagnostics?.persona!=='saige')throw new Error('The server is an older version. Restart the V0.18.0 server first.');
+      if(result.diagnostics?.persona!=='saige')throw new Error('The server is an older version. Restart the V0.19.0 server first.');
       report('YOU: '+content+'\nSAIGE: '+result.text);
       messages.push({role:'assistant',content:result.text});
     }
