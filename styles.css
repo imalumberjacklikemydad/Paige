@@ -4,3 +4,5 @@
 .brand-lockup{display:flex;align-items:center;gap:12px;min-width:0}.brand-avatar{width:48px;height:48px;flex:none;border-radius:50%;object-fit:cover;border:2px solid #74539e;box-shadow:0 4px 16px #0005}.brand-lockup>div{min-width:0}@media(max-width:390px){.brand-avatar{width:42px;height:42px}.brand-lockup{gap:9px}}
 
 .settings-card select{width:100%;border:1px solid var(--line);border-radius:13px;background:#08050e;color:var(--text);padding:11px;font:inherit}.settings-section p{color:var(--muted);font-size:13px;line-height:1.45;margin:0 0 10px}.message-actions [aria-pressed="true"]{background:var(--accent2);color:#130922}
+
+.persona-select{height:42px;border-radius:14px;border:1px solid var(--line);background:#1a102a;color:var(--text);padding:0 10px;font:inherit;font-weight:700}.saige-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#18352f;border:1px solid #5e9b8b;color:#d9fff5;font-weight:800}.top-actions{align-items:center}@media(max-width:390px){.persona-select{max-width:82px;padding:0 6px}}
